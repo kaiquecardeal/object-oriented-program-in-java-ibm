@@ -1,23 +1,24 @@
 import java.util.Scanner; // Importa a classe Scanner
 
 public class BooksMenu {
-
-    // Um método auxiliar para comparar dois livros e devolver aquele com o preço mais alto.
-    private static Book getExpensiveBook(Book book1, Book book2) {
-        if (book1.getPrice() < book2.getPrice()) {
-            return book2; // retorna o livro 2, caso ele seja mais caro.
+    private static void compareBooks(Book book1, Book book2) {
+        if (book1.equals(book2)) {
+            System.out.println("Os livros são iguais");
         } else {
-            return book1; // se não, retorna o primeiro livro.
+            System.out.println("Os livros são diferentes");
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws CloneNotSupportedException {
         Scanner scanner = new Scanner(System.in); // Usado para ler dados do usuário no console.
         Book[] books = new Book[10]; // Cria um array com 10 posições
         int bkIdx = 0; // Mantém o controle de quantos livros foram adicionados ao array.
 
         while (true) { // O programa executa um loop infinito para exibir o menu continuamente até que o usuário decida sair
-            System.out.println("Pressione 1 para ver os livros, 2 para adicionar livros e qualquer outra tecla para sair");
+            System.out.println("Pressione 1 para ver os livros," +
+                    "\n2 para adicionar, " +
+                    "\n3 para mudar o preço de um livro" +
+                    "\n4 para comparar os livros ou qualquer tecla para sair");
             String userAction = scanner.nextLine();
             if (userAction.equals("1")) { // '1' para visualizar os livros
                 for (int i = 0; i < books.length; i++) {
@@ -30,35 +31,56 @@ public class BooksMenu {
                     System.out.println("Já foi preenchido 10 livros. Não é possível adicionais mais livros!");
                     continue; // Pula a interação do loop
                 }
-                // Solicitar ao usuário detalhes do livro
-                System.out.println("Insira o nome do livro");
-                String tmpTitle = scanner.nextLine();
-                System.out.println("Insira o nome do autor");
-                String tmpAuthor = scanner.nextLine();
-                System.out.println("Insira o preço do livro");
-                float tpmPrice = Float.parseFloat(scanner.nextLine());
-
-                // Criando um novo 'objeto' do tipo livro
-                Book bkTmp = new Book();
-                bkTmp.setTitle(tmpTitle);
-                bkTmp.setAuthor(tmpAuthor);
-                bkTmp.setPrice(tpmPrice);
-                books[bkIdx++] = bkTmp;
-
-            } else if (userAction.equals("3")) { // '3' para comparar o preço dos livros e retornar o mais caros.
-
-                // Solicitar ao usuário os índices dos livros para comparação
-                System.out.println("Entre com o primeiro livro: ");
-                int book1Idx = Integer.parseInt(scanner.nextLine());
-                System.out.println("Entre com o segundo livro: ");
-                int book2Idx = Integer.parseInt(scanner.nextLine());
-                // Checando se os indices selecionados tem 'objetos' Livro válidos.
-                if (books[book1Idx] != null && books[book2Idx] != null) {
-                    // Comparando os livros e retornando o mais caro.
-                    System.out.println("Os detalhes do livro caro são: \n" +
-                            getExpensiveBook(books[book1Idx], books[book2Idx]));
+                // Pergunta ao usuário qual constructor usar
+                System.out.println("Qual 'constructor' você deseja usar? \nPressione 1 para o padrão " +
+                        "\n2 para criar um clone de um objeto existente " +
+                        "\nQualquer tecla para um construtor sobrecarregado");
+                String constructor = scanner.nextLine();
+                if (constructor.equals("1")) {
+                    System.out.println("Insira o título do livro");
+                    String tmpTitle = scanner.nextLine();
+                    System.out.println("Insira o autor do livro");
+                    String tmpAuthor = scanner.nextLine();
+                    System.out.println("Insira o valor do livro");
+                    float tmpPrice = Float.parseFloat(scanner.nextLine());
+                    Book bkTmp = new Book();
+                    bkTmp.setTitle(tmpTitle);
+                    bkTmp.setAuthor(tmpAuthor);
+                    bkTmp.setPrice(tmpPrice);
+                    books[bkIdx++] = bkTmp;
+                } else if (constructor.equals("2")) {
+                    System.out.println("Entre com o índice do livro para clonagem");
+                    int cloneIdx = Integer.parseInt(scanner.nextLine());
+                    if (books[cloneIdx] != null) {
+                        books[bkIdx++] = (Book) books[cloneIdx].clone();
+                    }
                 } else {
-                    System.out.println("Um dos livros é nulo!"); // Mensagem de erro sobre o indice vazio.
+                    System.out.println("Insira o título do livro");
+                    String tmpTitle = scanner.nextLine();
+                    System.out.println("Insira o autor do livro");
+                    String tmpAuthor = scanner.nextLine();
+                    System.out.println("Insira o valor do livro");
+                    float tpmPrice = Float.parseFloat(scanner.nextLine());
+                    books[bkIdx++] = new Book(tmpTitle, tmpAuthor, tpmPrice);
+                }
+            } else if (userAction.equals("3")) { // '3' para alterar o preço do livro
+                System.out.println("Entre com o índice do livro para alteração");
+                int idx = Integer.parseInt(scanner.nextLine());
+                if (books[idx] != null) {
+                    System.out.println("Entre com o novo preço do livro");
+                    float newPrice = Float.parseFloat(scanner.nextLine());
+                    books[idx].setPrice(newPrice);
+                }
+            } else if (userAction.equals("4")) {
+                System.out.println("Insira o índice do livro 1");
+                int book1Idx = Integer.parseInt(scanner.nextLine());
+                System.out.println(("Insira o índice do livro 2"));
+                int book2Idx = Integer.parseInt(scanner.nextLine());
+
+                if (books[book1Idx] != null && books[book2Idx] != null) {
+                    compareBooks(books[book1Idx], books[book2Idx]);
+                } else {
+                    System.out.println("Um dos livros é nulo.");
                 }
             } else {
                 break;
